@@ -69,7 +69,7 @@ if __name__ == '__main__':
     gradient = np.gradient(amplitude_envelope)
 
     # Find peaks in the gradient
-    peaks = np.zeros(gradient.shape)
+    peaks = np.zeros(gradient.shape, dtype=np.int16)
     peak_abs_threshold = args.thresh * np.max(gradient)
     peaks_idx, _ = signal.find_peaks(gradient, peak_abs_threshold, width=3, distance=rate)
     peaks[peaks_idx] = np.max(peak_abs_threshold)
@@ -79,9 +79,11 @@ if __name__ == '__main__':
         if len(peaks[peak:-1]) > len(insert_buffer):
             peaks[peak:peak+len(insert_buffer)] = insert_buffer
 
-    plt.plot(amplitude_envelope)
-    plt.plot(peaks)
-    plt.show()
+    # Show results if needed
+    if args.show:
+        plt.plot(amplitude_envelope)
+        plt.plot(peaks)
+        plt.show()
 
     # Go to disk
     wavfile.write(args.output, rate, peaks)
